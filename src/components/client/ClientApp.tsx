@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp, calculateGradePrice } from '../../context/AppContext';
-import { VegetableProduct, VegetableGrade, Farmer, FarmerStock, Order } from '../../types';
+import { VegetableProduct, VegetableGrade, Farmer, FarmerStock, Order, SMALL_CART_THRESHOLD, SMALL_CART_CHARGE } from '../../types';
 import {
   Search,
   ShoppingBag,
@@ -40,6 +40,8 @@ export const ClientApp: React.FC = () => {
     removeFromCart,
     clearCart,
     cartTotalKg,
+    cartSubtotal,
+    cartSmallCartCharge,
     cartTotalAmount,
     placeOrder,
     orders,
@@ -566,11 +568,29 @@ export const ClientApp: React.FC = () => {
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-stone-900">
-                  {cartTotalKg} kg Vegetables in Basket
+                <div className="text-xs font-bold text-stone-900 flex items-center gap-2">
+                  <span>{cartTotalKg} kg Vegetables in Basket</span>
+                  {cartSmallCartCharge > 0 ? (
+                    <span className="text-2xs bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded border border-amber-300">
+                      +₹{cartSmallCartCharge} Small Cart Charge
+                    </span>
+                  ) : (
+                    <span className="text-2xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300">
+                      FREE Cart Charge (Order ₹149+)
+                    </span>
+                  )}
                 </div>
                 <div className="text-2xs text-stone-500">
                   Total: <span className="font-bold text-stone-900">₹{cartTotalAmount}</span>
+                  {cartSmallCartCharge > 0 ? (
+                    <span className="ml-2 text-amber-800 font-semibold">
+                      • Add ₹{SMALL_CART_THRESHOLD - cartSubtotal} more for ₹0 fee
+                    </span>
+                  ) : (
+                    <span className="ml-2 text-emerald-700 font-semibold">
+                      • ₹0 small cart charge unlocked
+                    </span>
+                  )}
                   {cartTotalKg >= 50 && (
                     <span className="ml-2 bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded">
                       Bulk Order (Token Applicable)
@@ -613,6 +633,69 @@ export const ClientApp: React.FC = () => {
 
             {/* Drawer Body */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Small Cart Charge Threshold Progress Banner */}
+              <div
+                className={`p-3.5 rounded-xl border text-xs transition-all ${
+                  cartSubtotal < SMALL_CART_THRESHOLD
+                    ? 'bg-amber-50/90 border-amber-300 text-amber-950'
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-1.5 font-bold">
+                    {cartSubtotal < SMALL_CART_THRESHOLD ? (
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                    ) : (
+                      <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
+                    )}
+                    <span>
+                      {cartSubtotal < SMALL_CART_THRESHOLD
+                        ? `Small Cart Charge: ₹${cartSmallCartCharge} Added`
+                        : 'Free Delivery & ₹0 Small Cart Charge Unlocked!'}
+                    </span>
+                  </div>
+                  <span className="text-2xs font-extrabold px-1.5 py-0.5 rounded bg-white/80 border border-stone-200">
+                    Min Order: ₹{SMALL_CART_THRESHOLD}
+                  </span>
+                </div>
+
+                <p className="text-2xs text-stone-600 mb-2 leading-relaxed">
+                  {cartSubtotal < SMALL_CART_THRESHOLD ? (
+                    <>
+                      Orders below <strong>₹{SMALL_CART_THRESHOLD}</strong> include a small cart charge of{' '}
+                      <strong>₹{cartSmallCartCharge}</strong> for village harvest & direct logistics.{' '}
+                      <span className="text-amber-900 font-bold underline">
+                        Add ₹{SMALL_CART_THRESHOLD - cartSubtotal} more
+                      </span>{' '}
+                      to waive this fee completely!
+                    </>
+                  ) : (
+                    <>
+                      Your produce subtotal is <strong>₹{cartSubtotal}</strong> (above ₹{SMALL_CART_THRESHOLD}).{' '}
+                      Enjoy 100% farm-fresh delivery with <strong>₹0 small cart fee</strong>!
+                    </>
+                  )}
+                </p>
+
+                {/* Progress bar towards ₹149 */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-2xs font-semibold text-stone-600">
+                    <span>Current Subtotal: ₹{cartSubtotal}</span>
+                    <span>Goal: ₹{SMALL_CART_THRESHOLD}</span>
+                  </div>
+                  <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        cartSubtotal >= SMALL_CART_THRESHOLD ? 'bg-emerald-600' : 'bg-amber-500'
+                      }`}
+                      style={{
+                        width: `${Math.min(100, Math.round((cartSubtotal / SMALL_CART_THRESHOLD) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Items List */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between text-xs font-bold text-stone-700 uppercase tracking-wider">
@@ -891,12 +974,65 @@ export const ClientApp: React.FC = () => {
                   </label>
                 </div>
               </div>
+
+              {/* Detailed Bill Summary */}
+              <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-xs space-y-2">
+                <div className="font-bold text-stone-800 flex items-center justify-between border-b border-stone-200 pb-1.5">
+                  <span>Bill Breakdown</span>
+                  <span className="text-2xs text-stone-500 font-normal">{cartTotalKg} kg total produce</span>
+                </div>
+
+                <div className="flex justify-between text-stone-600">
+                  <span>Produce Subtotal</span>
+                  <span className="font-semibold text-stone-900">₹{cartSubtotal}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-stone-600">
+                  <div className="flex items-center gap-1.5">
+                    <span>Small Cart Charge</span>
+                    {cartSubtotal < SMALL_CART_THRESHOLD ? (
+                      <span className="text-2xs bg-amber-100 text-amber-900 font-semibold px-1.5 py-0.2 rounded border border-amber-200">
+                        Order &lt; ₹{SMALL_CART_THRESHOLD}
+                      </span>
+                    ) : (
+                      <span className="text-2xs bg-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.2 rounded border border-emerald-200">
+                        Waived
+                      </span>
+                    )}
+                  </div>
+                  {cartSubtotal < SMALL_CART_THRESHOLD ? (
+                    <span className="font-bold text-amber-900">+₹{cartSmallCartCharge}</span>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <span className="line-through text-stone-400">₹{SMALL_CART_CHARGE}</span>
+                      <span className="font-bold text-emerald-700 uppercase text-2xs">FREE</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between items-center text-stone-600">
+                  <span>Next-Morning Locality Route</span>
+                  <span className="font-bold text-emerald-700 uppercase text-2xs">FREE</span>
+                </div>
+
+                <div className="pt-2 border-t border-stone-200 flex justify-between items-center text-sm font-bold text-stone-900">
+                  <span>Total Amount</span>
+                  <span className="text-base font-black text-emerald-800">₹{cartTotalAmount}</span>
+                </div>
+              </div>
             </div>
 
             {/* Drawer Footer Checkout Button */}
             <div className="p-4 bg-stone-100 border-t border-stone-200">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs text-stone-600">Total Vegetables ({cartTotalKg} kg)</span>
+                <div>
+                  <span className="text-xs text-stone-600 block">Total Payable ({cartTotalKg} kg)</span>
+                  {cartSmallCartCharge > 0 && (
+                    <span className="text-2xs text-amber-800 font-medium">
+                      (Includes ₹{cartSmallCartCharge} small cart fee)
+                    </span>
+                  )}
+                </div>
                 <span className="text-lg font-black text-stone-900">
                   ₹{effectiveIsBulk ? `${tokenAmount} Token Now (Total ₹${cartTotalAmount})` : cartTotalAmount}
                 </span>

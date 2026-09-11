@@ -107,6 +107,9 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
+export const SMALL_CART_THRESHOLD = 149;
+export const SMALL_CART_CHARGE = 20;
+
 export interface Order {
   id: string;
   orderNumber: string;
@@ -115,6 +118,8 @@ export interface Order {
   customerAddress: string;
   items: OrderItem[];
   totalKg: number;
+  subtotal?: number; // Produce items value before any charges
+  smallCartCharge?: number; // Small cart fee applied when subtotal < 149
   totalAmount: number;
   isBulk: boolean;
   tokenPercentage?: number; // e.g. 30%, 50%, 100%

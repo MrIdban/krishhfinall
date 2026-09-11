@@ -339,6 +339,7 @@ export const RiderApp: React.FC = () => {
                           ) : (
                             <span className="text-stone-900 font-bold">
                               • Cash on Delivery: Collect full amount ₹{ord.totalAmount}
+                              {ord.smallCartCharge ? ` (incl. ₹${ord.smallCartCharge} small cart fee)` : ''}
                             </span>
                           )}
                         </div>

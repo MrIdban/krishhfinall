@@ -271,8 +271,32 @@ export const OrderTrackingModal: React.FC<Props> = ({
           {/* Financial Breakdown: Regular vs Bulk Token */}
           <div className="bg-stone-50 p-3 rounded-lg border border-stone-200 text-xs space-y-1.5">
             <div className="flex justify-between text-stone-600">
-              <span>Order Value ({order.totalKg} kg)</span>
-              <span className="font-semibold">₹{order.totalAmount}</span>
+              <span>Produce Subtotal ({order.totalKg} kg)</span>
+              <span className="font-semibold text-stone-900">
+                ₹{order.subtotal ?? (order.totalAmount - (order.smallCartCharge ?? 0))}
+              </span>
+            </div>
+
+            {order.smallCartCharge ? (
+              <div className="flex justify-between items-center text-amber-900 bg-amber-50 px-2 py-1 rounded border border-amber-200">
+                <span>Small Cart Charge (Order &lt; ₹149)</span>
+                <span className="font-bold">+₹{order.smallCartCharge}</span>
+              </div>
+            ) : (
+              <div className="flex justify-between text-stone-600">
+                <span>Small Cart Charge</span>
+                <span className="text-emerald-700 font-bold uppercase text-2xs">FREE (Order ₹149+)</span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-stone-600">
+              <span>Doorstep Delivery (Local Hub Route)</span>
+              <span className="text-emerald-700 font-bold uppercase text-2xs">FREE</span>
+            </div>
+
+            <div className="flex justify-between text-stone-900 font-bold pt-1.5 border-t border-stone-200 text-sm">
+              <span>Total Payable</span>
+              <span className="font-black text-emerald-900">₹{order.totalAmount}</span>
             </div>
 
             {order.isBulk && order.tokenPaid !== undefined ? (
@@ -287,7 +311,7 @@ export const OrderTrackingModal: React.FC<Props> = ({
                 </div>
               </>
             ) : (
-              <div className="flex justify-between text-stone-800 font-semibold">
+              <div className="flex justify-between text-stone-800 font-semibold pt-1">
                 <span>Payment Mode</span>
                 <span className="uppercase text-2xs bg-stone-200 px-2 py-0.5 rounded font-bold">
                   {order.paymentMode === 'prepaid' ? 'Online Prepaid (Settled)' : 'Cash on Delivery (Pending)'}

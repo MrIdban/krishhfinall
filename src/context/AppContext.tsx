@@ -18,6 +18,8 @@ import {
   FarmerPayoutTransaction,
   FarmerSupportTicket,
   AIDemandForecastResult,
+  SMALL_CART_THRESHOLD,
+  SMALL_CART_CHARGE,
 } from '../types';
 import { translations, Translations } from '../i18n';
 import {
@@ -82,6 +84,8 @@ interface AppContextType {
   removeFromCart: (vegetableId: string, farmerId: string, grade: VegetableGrade) => void;
   clearCart: () => void;
   cartTotalKg: number;
+  cartSubtotal: number;
+  cartSmallCartCharge: number;
   cartTotalAmount: number;
 
   // Customer actions
@@ -731,7 +735,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const clearCart = () => setCart([]);
 
   const cartTotalKg = cart.reduce((acc, i) => acc + i.quantityKg, 0);
-  const cartTotalAmount = cart.reduce((acc, i) => acc + i.quantityKg * i.pricePerKg, 0);
+  const cartSubtotal = cart.reduce((acc, i) => acc + i.quantityKg * i.pricePerKg, 0);
+  const cartSmallCartCharge = cart.length > 0 && cartSubtotal < SMALL_CART_THRESHOLD ? SMALL_CART_CHARGE : 0;
+  const cartTotalAmount = cartSubtotal + cartSmallCartCharge;
 
   // Place order
   const placeOrder = (params: {
@@ -770,6 +776,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customerAddress: params.customerAddress || 'Mandi Road, Sehore',
       items,
       totalKg: cartTotalKg,
+      subtotal: cartSubtotal,
+      smallCartCharge: cartSmallCartCharge,
       totalAmount: cartTotalAmount,
       isBulk: isBulkOrder,
       tokenPercentage: tokenPct,
@@ -1139,6 +1147,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         removeFromCart,
         clearCart,
         cartTotalKg,
+        cartSubtotal,
+        cartSmallCartCharge,
         cartTotalAmount,
         placeOrder,
         createCustomerTicket,
