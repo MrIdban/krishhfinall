@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Krishihaat - Direct Farm-to-Fork Mandi",
+  "description": "Blinkit-style direct farmer-to-consumer vegetable marketplace with Local Admin verification, Client shopping \u0026 bulk token orders, and Delivery Rider portals in multiple languages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

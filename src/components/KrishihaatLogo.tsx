@@ -1,0 +1,183 @@
+import React from 'react';
+
+interface LogoProps {
+  className?: string;
+  size?: number | string;
+  withBackground?: boolean;
+  leafColor?: string;
+  veinColor?: string;
+}
+
+/**
+ * Official KrishiHAAT Bok Choy Leaf Logo
+ * High-precision vector matching uploaded logo krishihaat (1).png
+ */
+export const KrishihaatLogo: React.FC<LogoProps> = ({
+  className = 'w-10 h-10',
+  size,
+  withBackground = false,
+  leafColor = '#829c73',
+  veinColor = '#ede4d4',
+}) => {
+  return (
+    <svg
+      viewBox="0 0 1000 1000"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`shrink-0 select-none ${className}`}
+      style={size ? { width: size, height: size } : undefined}
+    >
+      {withBackground && (
+        <rect width="1000" height="1000" rx="96" fill="#ede4d4" />
+      )}
+
+      {/* 1. Severed stalk base segments at bottom-left (two distinct curved cuts) */}
+      <path
+        d="M 115 810 C 105 828 120 858 155 870 C 178 874 192 865 195 852 C 176 860 150 856 136 840 C 124 826 118 815 115 810 Z"
+        fill={leafColor}
+      />
+      <path
+        d="M 198 865 C 228 880 270 878 294 855 C 300 848 292 838 280 844 C 255 856 225 856 208 848 C 200 844 196 852 198 865 Z"
+        fill={leafColor}
+      />
+
+      {/* 2. Main Bok Choy / Leaf Body Silhouette */}
+      <path
+        d="
+          M 125 785
+          C 112 755 125 710 162 655
+          C 200 600 240 545 268 475
+          C 285 435 272 380 262 328
+          C 252 280 265 240 300 205
+          C 330 175 365 170 388 185
+          C 405 195 418 190 425 178
+          C 438 152 455 130 488 118
+          C 525 105 565 112 595 122
+          C 615 130 635 125 650 115
+          C 675 100 710 105 735 125
+          C 755 140 762 165 745 185
+          C 732 200 740 220 760 215
+          C 785 208 820 225 840 255
+          C 858 285 850 325 825 355
+          C 810 372 818 395 838 405
+          C 868 420 892 455 885 500
+          C 878 545 845 585 810 618
+          C 785 640 740 670 690 690
+          C 630 715 570 705 520 670
+          C 460 625 415 625 370 655
+          C 320 690 270 750 210 790
+          C 185 805 155 802 125 785
+          Z
+        "
+        fill={leafColor}
+      />
+
+      {/* 3. Left stalk outer groove channel */}
+      <path
+        d="
+          M 155 798
+          C 190 750 235 690 270 625
+          C 300 570 325 510 340 455
+          C 345 440 338 438 332 445
+          C 315 495 285 555 252 610
+          C 215 675 172 735 145 790
+          C 142 796 148 802 155 798
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 4. Main central stalk petiole trunk */}
+      <path
+        d="
+          M 215 815
+          C 260 760 325 675 380 580
+          C 420 515 455 430 472 340
+          C 480 295 484 250 484 200
+          C 484 185 490 182 500 190
+          C 510 230 504 290 496 335
+          C 480 420 440 505 396 570
+          C 340 655 270 735 220 810
+          C 215 818 210 819 215 815
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 5. Left leaf primary vein branch */}
+      <path
+        d="
+          M 350 540
+          C 320 490 295 435 284 365
+          C 280 350 288 346 294 354
+          C 304 406 330 460 360 515
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 6. Upper-left crown vein branch */}
+      <path
+        d="
+          M 430 435
+          C 395 370 370 305 360 240
+          C 358 230 366 230 372 236
+          C 384 286 410 342 444 406
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 7. Upper crown vein towards top apex */}
+      <path
+        d="
+          M 480 310
+          C 510 255 544 200 580 155
+          C 588 145 596 152 590 160
+          C 560 210 524 265 492 325
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 8. Main Right branch sweeping into lower-right broad leaf */}
+      <path
+        d="
+          M 410 535
+          C 480 510 556 502 630 510
+          C 680 516 730 530 770 548
+          C 780 554 776 564 764 560
+          C 720 540 670 526 620 522
+          C 550 516 476 526 404 555
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 9. Sub-vein 1 off right branch (curving upwards) */}
+      <path
+        d="
+          M 540 510
+          C 580 465 630 428 684 398
+          C 696 390 700 402 690 410
+          C 640 440 590 474 556 514
+          Z
+        "
+        fill={veinColor}
+      />
+
+      {/* 10. Sub-vein 2 off right branch (curving downwards) */}
+      <path
+        d="
+          M 590 516
+          C 640 555 684 605 716 660
+          C 724 674 712 680 704 668
+          C 676 620 636 574 590 530
+          Z
+        "
+        fill={veinColor}
+      />
+    </svg>
+  );
+};
+
